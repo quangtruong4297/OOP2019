@@ -1,0 +1,180 @@
+package tilegame.entities.creatures;
+
+import tilegame.Handler;
+import tilegame.entities.creatures.Creature.CreatureDir;
+import tilegame.gfx.Animation;
+import tilegame.gfx.Assets;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+public class Diablo extends Monster {
+
+    protected static final int MAX_HEALTH = 30;
+    private int alpha = 2;
+
+    public Diablo(Handler handler, float x, float y, int desX, int desY) {
+        super(handler, x, y, desX, desY);
+
+        width = (int) (width * alpha);
+        height = (int) (height * alpha);
+
+        scope = new Rectangle((-1 * width), (-1 * height),
+                3 * width, 3 * height);
+        this.startX = (int) x;
+        this.startY = (int) y;
+        this.desX = desX;
+        this.desY = desY;
+        setOrient();
+        speed = 1;
+        damage = 8;
+
+        animation_left = new Animation(120, Assets.diablo1_left);
+        animation_right = new Animation(120, Assets.diablo1_right);
+        animation_down = new Animation(120, Assets.diablo1_down);
+        animation_up = new Animation(120, Assets.diablo1_up);
+
+        attack_left = new Animation(120, Assets.diablo1_left);
+        attack_right = new Animation(120, Assets.diablo1_right);
+        attack_down = new Animation(120, Assets.diablo1_down);
+        attack_up = new Animation(120, Assets.diablo1_up);
+
+        bounds.x = width >> 3;
+        bounds.y = height >> 1;
+        bounds.width = width - (width >> 2);
+        bounds.height = height >> 1;
+        health = MAX_HEALTH;
+    }
+
+    @Override
+    protected void slash() {
+    	if(hero == null) 
+            hero = handler.getWorldManager().getWorld().getEntityManager().getHero();
+        if (meleeKombat().intersects(getCollisionBounds(0, 0))) {
+            if (hurt) {
+                curTime = System.currentTimeMillis();
+                if (curTime - preTime > 600) {
+                    skillShot();
+                    preTime = System.currentTimeMillis();
+                }
+            }
+            
+            hurt = true;
+        } else {
+            hurt = false;
+            preTime = System.currentTimeMillis();
+        } 
+    };
+    
+    @Override
+    protected void combat() {
+    	if(hero == null) 
+            hero = handler.getWorldManager().getWorld().getEntityManager().getHero();
+        xMove = yMove = 0;
+        int heroX = (int) hero.getX();
+        int heroY = (int) hero.getY();
+        if (heroX - this.x - width/4 > speed) {
+            this.xMove = speed;
+            dir = CreatureDir.right;
+            if (heroY - this.y - height/2 > speed) {
+                this.yMove = speed;
+            } 
+            else if (heroY - this.y - height/2 < -speed) {
+                this.yMove = -speed;
+            } 
+        }
+        else if (heroX - this.x - width/4 < -speed) {
+            this.xMove = -speed;
+            dir = CreatureDir.left;
+            if (heroY - this.y - height/2 > speed) {
+                this.yMove = speed;
+            }
+            if (heroY - this.y - height/2 < -speed) {
+                this.yMove = -speed;
+            }
+        }
+        else {
+            if (heroY - this.y - height/2 > speed) {
+                this.yMove = speed;
+                dir = CreatureDir.down;
+            } 
+            else if (heroY - this.y - height/2 < -speed) {
+                this.yMove = -speed;
+                dir = CreatureDir.up;
+            }
+        }
+    };
+    
+    @Override
+    protected void healthBar(Graphics g, int rx, int ry) {
+        if(health > MAX_HEALTH / 3)
+            g.setColor(Color.green);
+        else
+            g.setColor(Color.red);
+        g.fillRoundRect(rx, ry - (int) (10 * alpha), width * health / MAX_HEALTH, 10, 5, 5);
+
+        g.setColor(Color.black);
+        g.drawRoundRect(rx, ry - (int) (10 * alpha), width, 10, 5, 5);
+    }
+
+    protected BufferedImage getCurrentAnimationFrame() {
+        if (dir == CreatureDir.left) {
+            if (xMove != 0)
+                return animation_left.getCurrentFrame();
+            else
+                return Assets.diablo1_left[0];
+        } else if (dir == CreatureDir.right) {
+            if (xMove != 0)
+                return animation_right.getCurrentFrame();
+            else
+                return Assets.diablo1_right[0];
+        } else if (dir == CreatureDir.up) {
+            if (yMove != 0)
+                return animation_up.getCurrentFrame();
+            else
+                return Assets.diablo1_up[0];
+        } else if (dir == CreatureDir.down) {
+            if (yMove != 0)
+                return animation_down.getCurrentFrame();
+            else
+                return Assets.diablo1_down[0];
+        }
+        return null;
+    }
+    private void skillShot() {
+//      attackTimer += System.currentTimeMillis() - lastAttackTimer;
+//      lastAttackTimer = System.currentTimeMillis();
+
+              attack_right.setIndex(0);
+              attack_left.setIndex(0);
+              attack_down.setIndex(0);
+              attack_up.setIndex(0);
+
+              Rectangle cb = getCollisionBounds(0, 0);
+              if (dir == CreatureDir.up) {
+                  int skillX = (int) x+32;
+                  int skillY = cb.y - 64 - 1;
+                  handler.getWorldManager().getWorld().getEntityManager().addEntity(new Kamezoko(handler, skillX, skillY, dir));
+              } else if (dir == CreatureDir.down) {
+                  int skillX = (int) x;
+                  int skillY = cb.y + cb.height + 1;
+                  handler.getWorldManager().getWorld().getEntityManager().addEntity(new Kamezoko(handler, skillX, skillY, dir));
+              } else if (dir == CreatureDir.right) {
+                  int skillX = cb.x + cb.width + 1;
+                  int skillY = (int) (y);
+                  handler.getWorldManager().getWorld().getEntityManager().addEntity(new Kamezoko(handler, skillX, skillY, dir));
+
+              } else if (dir == CreatureDir.left) {
+                  int skillX = cb.x - 32 - 1;
+                  int skillY = (int) (y);
+                  handler.getWorldManager().getWorld().getEntityManager().addEntity(new Kamezoko(handler, skillX, skillY, dir));
+
+              } else {
+                  return;
+              }
+
+          }
+    public void die() {
+        handler.getWorldManager().setBossKilled(handler.getWorldManager().getBossKilled()+1);
+    }
+}

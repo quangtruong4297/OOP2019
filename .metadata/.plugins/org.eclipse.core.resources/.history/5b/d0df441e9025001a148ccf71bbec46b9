@@ -1,0 +1,322 @@
+package tilegame.entities.creatures;
+
+import tilegame.Handler;
+import tilegame.entities.Entity;
+import tilegame.gfx.Animation;
+import tilegame.gfx.Assets;
+import tilegame.inventory.Inventory;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+/**
+ * Created by BanhBaoMocMeo on 11/22/2017.
+ */
+public class Hero extends Creature {
+
+    public static int MAX_HEALTH = 60;
+    public static int MAX_MANA = 50;
+    public static int DAME = 1;
+    public static float SPEED = 3;
+
+    private Animation animation_down, animation_up, animation_left, animation_right;
+    private Animation attack_down, attack_up, attack_left, attack_right;
+    //Attack!!
+    private boolean attacking = false;
+    private int attackRange;
+    private long lastAttackTimer, attackCooldown = 300, attackTimer = attackCooldown;
+
+    private Inventory inventory;
+    private BufferedImage curFrame;
+
+    public Hero(Handler handler, float x, float y) {
+        super(handler, x, y, DEFAULT_CREATURE_WIDTH, DEFAULT_CREATURE_HEIGHT);
+
+        attackRange = 40;
+        bounds.x = width / 4;
+        bounds.y = height / 2;
+        bounds.width = width / 2;
+        bounds.height = height / 2;
+        dir = CreatureDir.down;
+        damage = DAME;
+
+        //ANIMATION
+        attack_down = new Animation((int) attackCooldown / 6, Assets.hero_attack_down);
+        attack_up = new Animation((int) attackCooldown / 6, Assets.hero_attack_up);
+        attack_left = new Animation((int) attackCooldown / 6, Assets.hero_attack_left);
+        attack_right = new Animation((int) attackCooldown / 6, Assets.hero_attack_right);
+
+        animation_down = new Animation(120, Assets.hero_down);
+        animation_up = new Animation(120, Assets.hero_up);
+        animation_left = new Animation(120, Assets.hero_left);
+        animation_right = new Animation(120, Assets.hero_right);
+
+        //INVENTORY
+        inventory = new Inventory(handler);
+        health = MAX_HEALTH;
+        mana = MAX_MANA;
+        speed = SPEED;
+
+    }
+
+    @Override
+    public void tick() {
+
+        //Animation
+        animation_down.tick();
+        animation_up.tick();
+        animation_left.tick();
+        animation_right.tick();
+
+        attack_down.tick();
+        attack_up.tick();
+        attack_left.tick();
+        attack_right.tick();
+
+        //Movement
+        getInput();
+        move();
+        handler.getGameCamera().centerOnEntity(this);
+        //hoi_mana
+        rec_mana();
+
+        //Attack
+        checkAttack();
+        skillShot();
+
+        //Inventory
+        inventory.tick();
+    }
+    long preTime = System.currentTimeMillis();
+    long curTime = System.currentTimeMillis();
+    private void rec_mana() {
+    	curTime = System.currentTimeMillis();
+        if (curTime - preTime > 5000) {
+        	if(mana < MAX_MANA)
+        		if(MAX_MANA - mana <= 1) mana = MAX_MANA;
+        		else mana +=2;
+            preTime = System.currentTimeMillis();
+        }
+    	
+    	return;
+    }
+
+    private void checkAttack() {
+        attackTimer += System.currentTimeMillis() - lastAttackTimer;
+        lastAttackTimer = System.currentTimeMillis();
+        if (attackTimer < attackCooldown)
+            return;
+        else {
+            attacking = false;
+            attack_right.setIndex(0);
+            attack_left.setIndex(0);
+            attack_down.setIndex(0);
+            attack_up.setIndex(0);
+        }
+
+        if (handler.getKeyManager().attack) {
+            attacking = true;
+            Rectangle cb = getCollisionBounds(0, 0);
+            Rectangle ar = new Rectangle();
+            ar.width = attackRange;
+            ar.height = attackRange;
+
+            if (dir == CreatureDir.up) {
+                ar.x = cb.x + cb.width / 2 - attackRange / 2;
+                ar.y = cb.y - attackRange;
+            } else if (dir == CreatureDir.down) {
+                ar.x = cb.x + cb.width / 2 - attackRange / 2;
+                ar.y = cb.y + cb.height;
+            } else if (dir == CreatureDir.left) {
+                ar.x = cb.x - attackRange;
+                ar.y = cb.y + cb.height / 2 - attackRange / 2;
+            } else if (dir == CreatureDir.right) {
+                ar.x = cb.x + cb.width;
+                ar.y = cb.y + cb.height / 2 - attackRange / 2;
+            } else {
+                return;
+            }
+
+            attackTimer = 0;
+
+            for (Entity e : handler.getWorldManager().getWorld().getEntityManager().getEntities()) {
+                if (e.equals(this))
+                    continue;
+                if (e.getCollisionBounds(0, 0).intersects(ar)) {
+                    e.hurt(damage);
+                    //just can damage 1 object per attack
+                    return;
+                }
+            }
+        }
+    }
+
+    private void skillShot() {
+//        attackTimer += System.currentTimeMillis() - lastAttackTimer;
+//        lastAttackTimer = System.currentTimeMillis();
+        if (mana > 0) {
+            if (attackTimer < attackCooldown)
+                return;
+            else {
+                attacking = false;
+                attack_right.setIndex(0);
+                attack_left.setIndex(0);
+                attack_down.setIndex(0);
+                attack_up.setIndex(0);
+            }
+
+            if (handler.getKeyManager().skillShot) {
+                attacking = true;
+                Rectangle cb = getCollisionBounds(0, 0);
+                if (dir == CreatureDir.up) {
+                    int skillX = (int) x;
+                    int skillY = cb.y - 32 - 1;
+                    handler.getWorldManager().getWorld().getEntityManager().addEntity(new Kamezoko(handler, skillX, skillY, dir));
+                } else if (dir == CreatureDir.down) {
+                    int skillX = (int) x;
+                    int skillY = cb.y + cb.height + 1;
+                    handler.getWorldManager().getWorld().getEntityManager().addEntity(new Kamezoko(handler, skillX, skillY, dir));
+                } else if (dir == CreatureDir.right) {
+                    int skillX = cb.x + cb.width + 1;
+                    int skillY = (int) (y);
+                    handler.getWorldManager().getWorld().getEntityManager().addEntity(new Kamezoko(handler, skillX, skillY, dir));
+
+                } else if (dir == CreatureDir.left) {
+                    int skillX = cb.x - 32 - 1;
+                    int skillY = (int) (y);
+                    handler.getWorldManager().getWorld().getEntityManager().addEntity(new Kamezoko(handler, skillX, skillY, dir));
+
+                } else {
+                    return;
+                }
+                mana -= Kamezoko.DEFAULT_COST;
+                attackTimer = 0;
+
+            }
+        }
+    }
+
+    public void die() {
+
+    }
+
+    private void getInput() {
+        xMove = 0;
+        yMove = 0;
+        if (!attacking) {
+            if (handler.getKeyManager().up) {
+                yMove = -speed;
+                dir = CreatureDir.up;
+            }
+            if (handler.getKeyManager().down) {
+                yMove = speed;
+                dir = CreatureDir.down;
+            }
+            if (handler.getKeyManager().left) {
+                xMove = -speed;
+                dir = CreatureDir.left;
+            }
+            if (handler.getKeyManager().right) {
+                xMove = speed;
+                dir = CreatureDir.right;
+            }
+        }
+    }
+
+    @Override
+    public void render(Graphics g) {
+        curFrame = getCurrentAnimationFrame();
+        int rx = (int) (x - handler.getGameCamera().getxOffset() - curFrame.getWidth() + width / 2);
+        int ry = (int) (y - handler.getGameCamera().getyOffset() - curFrame.getHeight() + height / 2);
+
+//        healthBar(g, rx, ry);
+
+        g.drawImage(curFrame, rx, ry, curFrame.getWidth() * 2, curFrame.getHeight() * 2, null);
+    }
+
+
+    private BufferedImage getCurrentAnimationFrame() {
+
+        if (dir == CreatureDir.left) {
+            if (attacking) {
+                return attack_left.getCurrentFrame();
+            }
+            if (xMove != 0)
+                return animation_left.getCurrentFrame();
+            else
+                return Assets.hero_left[0];
+        } else if (dir == CreatureDir.right) {
+            if (attacking)
+                return attack_right.getCurrentFrame();
+            if (xMove != 0)
+                return animation_right.getCurrentFrame();
+            else
+                return Assets.hero_right[0];
+        } else if (dir == CreatureDir.up) {
+            if (attacking)
+                return attack_up.getCurrentFrame();
+            if (yMove != 0)
+                return animation_up.getCurrentFrame();
+            else
+                return Assets.hero_up[0];
+        } else if (dir == CreatureDir.down) {
+            if (attacking)
+                return attack_down.getCurrentFrame();
+            if (yMove != 0)
+                return animation_down.getCurrentFrame();
+            else
+                return Assets.hero_down[0];
+        }
+        return null;
+    }
+
+
+    public void renderPost(Graphics g) {
+        inventory.render(g);
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+    public int setMana(int mana) {
+    	return this.mana=mana;
+    }
+    public int setHealth(int health) {
+    	return this.health=health;
+    }
+
+	public  int getMaxHealth() {
+		return MAX_HEALTH;
+	}
+
+	public  int setMaxHealth(int maxHealth) {
+		return this.MAX_HEALTH = maxHealth;
+	}
+
+	public  int getMaxMana() {
+		return MAX_MANA;
+	}
+
+	public  int setMaxMana(int maxMana) {
+		return this.MAX_MANA = maxMana;
+	}
+
+	public  int getDame() {
+		return DAME;
+	}
+
+	public int setDame(int dame) {
+		return this.DAME = dame;
+	}
+
+	public  float getSPEED() {
+		return SPEED;
+	}
+
+	public  float setSPEED(float sPEED) {
+		return this.SPEED = sPEED;
+	}
+
+    
+}
+

@@ -1,0 +1,271 @@
+package tilegame.gfx;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+/**
+ * Created by BanhBaoMocMeo on 11/21/2017.
+ */
+public class Assets {
+
+    private static final int WIDTH = 32, HEIGHT = 32;
+
+    public static BufferedImage tree, wood, mount, stone, heart;
+    public static BufferedImage[] tiles;
+
+    public static BufferedImage[] hero_down, hero_up, hero_left, hero_right;
+    public static BufferedImage[] hero_attack_down, hero_attack_up, hero_attack_left, hero_attack_right;
+
+    public static BufferedImage[] monster_down, monster_up, monster_left, monster_right;
+    public static BufferedImage[] diablo1_down, diablo1_up, diablo1_left, diablo1_right;
+
+    public static BufferedImage[] btn_start, btn_exit;
+    public static BufferedImage inventory, slot;
+
+    public static BufferedImage[] skill, portal;
+    public static BufferedImage[] diablo_attack;
+    public static Font font12, font15, font40;
+
+    public static BufferedImage backgroundWall;
+    public static BufferedImage avatar;
+    public static BufferedImage rec_mana;
+    public static BufferedImage[] namemap;
+
+    public static void init() {
+        font12 = FontLoader.loadFont("src/res/fonts/slkscr.ttf", 12);
+        font15 = FontLoader.loadFont("src/res/fonts/slkscr.ttf", 15);
+        font40 = FontLoader.loadFont("src/res/fonts/slkscr.ttf", 40);
+
+        SpriteSheet heroSheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/hero.png"));
+        SpriteSheet monsterSheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/sonic.png"));
+        SpriteSheet diablo1Sheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/diablo1.png"));
+
+        SpriteSheet skillSheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/skill.png"));
+
+        SpriteSheet treeSheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/tree.png"));
+        SpriteSheet mountSheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/mountain.png"));
+        SpriteSheet menuSheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/menu.png"));
+
+        SpriteSheet portalSheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/portal.png"));
+        SpriteSheet tileSheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/tilesheet.png"));
+        SpriteSheet nameSheet = new SpriteSheet(ImageLoader.loadImage("/res/textures/namemap.png"));
+        inventory = ImageLoader.loadImage("/res/textures/inventory.png");
+        slot = ImageLoader.loadImage("/res/textures/slot.png");
+        backgroundWall = ImageLoader.loadImage("/res/textures/bgwall.png");
+        avatar = ImageLoader.loadImage("/res/textures/avatar.png");
+
+        //BUTTON START
+
+        btn_start = new BufferedImage[3];
+        btn_start[1] = menuSheet.crop(0, 0, WIDTH * 4, HEIGHT * 2);
+        btn_start[0] = menuSheet.crop(WIDTH * 4, 0, WIDTH * 4, HEIGHT * 2);
+        btn_start[2] = menuSheet.crop(WIDTH * 8, 0, WIDTH * 4, HEIGHT * 2);
+
+        btn_exit = new BufferedImage[3];
+        btn_exit[1] = menuSheet.crop(0, HEIGHT * 2, WIDTH * 4, HEIGHT * 2);
+        btn_exit[0] = menuSheet.crop(WIDTH * 4, HEIGHT * 2, WIDTH * 4, HEIGHT * 2);
+        btn_exit[2] = menuSheet.crop(WIDTH * 8, HEIGHT * 2, WIDTH * 4, HEIGHT * 2);
+
+        //TERRAIN TILE
+        
+        tree = treeSheet.crop(0, 2*HEIGHT, WIDTH, 2*HEIGHT);
+        mount = mountSheet.crop(WIDTH * 4, 0 , WIDTH * 2, HEIGHT * 2);
+
+        tiles = new BufferedImage[20];
+        tiles[0] = tileSheet.crop(0, 0, WIDTH, HEIGHT);
+        tiles[1] = tileSheet.crop(WIDTH, 0, WIDTH, HEIGHT);
+        tiles[2] = tileSheet.crop(2*WIDTH, 0, WIDTH, HEIGHT);
+        tiles[3] = tileSheet.crop(0, HEIGHT, WIDTH, HEIGHT);
+        tiles[4] = tileSheet.crop(WIDTH, HEIGHT, WIDTH, HEIGHT);
+        tiles[5] = tileSheet.crop(2*WIDTH, HEIGHT, WIDTH, HEIGHT);
+        tiles[6] = tileSheet.crop(0, 2*HEIGHT, WIDTH, HEIGHT);
+        tiles[7] = tileSheet.crop(WIDTH, 2*HEIGHT, WIDTH, HEIGHT);
+        tiles[8] = tileSheet.crop(2*WIDTH, 2*HEIGHT, WIDTH, HEIGHT);
+        tiles[9] = tileSheet.crop(3*WIDTH, 0, WIDTH, HEIGHT);
+        tiles[10] = tileSheet.crop(4*WIDTH, 0, WIDTH, HEIGHT);
+        tiles[11] = tileSheet.crop(3*WIDTH, HEIGHT, WIDTH, HEIGHT);
+        tiles[12] = tileSheet.crop(4*WIDTH, HEIGHT, WIDTH, HEIGHT);
+        tiles[13] = tileSheet.crop(5*WIDTH, 0, WIDTH, HEIGHT);
+        tiles[14] = tileSheet.crop(6*WIDTH, 0, WIDTH, HEIGHT);
+        tiles[15] = tileSheet.crop(5*WIDTH, HEIGHT, WIDTH, HEIGHT);
+        tiles[16] = tileSheet.crop(6*WIDTH, HEIGHT, WIDTH, HEIGHT);
+        tiles[17] = tileSheet.crop(7*WIDTH, 2*HEIGHT, WIDTH, HEIGHT);
+        tiles[18] = tileSheet.crop(5*WIDTH, 2*HEIGHT, WIDTH, HEIGHT);
+        tiles[19] = tileSheet.crop(6*WIDTH, 2*HEIGHT, WIDTH, HEIGHT);
+
+        //ITEMS
+        stone = treeSheet.crop(4*WIDTH, 7*HEIGHT, WIDTH, HEIGHT);
+        wood = treeSheet.crop(6*WIDTH, HEIGHT, WIDTH, HEIGHT);
+        heart =treeSheet.crop(WIDTH*2, HEIGHT*6, WIDTH, HEIGHT);
+        
+
+        //MONSTER
+
+        monster_down = new BufferedImage[4];
+        monster_down[0] = monsterSheet.crop(WIDTH*3, HEIGHT*4, WIDTH, HEIGHT);
+        monster_down[1] = monsterSheet.crop(WIDTH*4, HEIGHT*4, WIDTH, HEIGHT);
+        monster_down[2] = monsterSheet.crop(WIDTH*5, HEIGHT*4, WIDTH, HEIGHT);
+        monster_down[3] = monsterSheet.crop(WIDTH*4, HEIGHT*4, WIDTH, HEIGHT);
+
+        monster_up = new BufferedImage[4];
+        monster_up[0] = monsterSheet.crop(WIDTH*3, HEIGHT*7, WIDTH, HEIGHT);
+        monster_up[1] = monsterSheet.crop(WIDTH*4, HEIGHT*7, WIDTH, HEIGHT);
+        monster_up[2] = monsterSheet.crop(WIDTH*5, HEIGHT*7, WIDTH, HEIGHT);
+        monster_up[3] = monsterSheet.crop(WIDTH*4, HEIGHT*7, WIDTH, HEIGHT);
+
+        monster_left = new BufferedImage[4];
+        monster_left[0] = monsterSheet.crop(WIDTH*3, HEIGHT*5, WIDTH, HEIGHT);
+        monster_left[1] = monsterSheet.crop(WIDTH*4, HEIGHT*5, WIDTH, HEIGHT);
+        monster_left[2] = monsterSheet.crop(WIDTH*5, HEIGHT*5, WIDTH, HEIGHT);
+        monster_left[3] = monsterSheet.crop(WIDTH*4, HEIGHT*5, WIDTH, HEIGHT);
+
+        monster_right = new BufferedImage[4];
+        monster_right[0] = monsterSheet.crop(WIDTH*3, HEIGHT*6, WIDTH, HEIGHT);
+        monster_right[1] = monsterSheet.crop(WIDTH*4, HEIGHT*6, WIDTH, HEIGHT);
+        monster_right[2] = monsterSheet.crop(WIDTH*5, HEIGHT*6, WIDTH, HEIGHT);
+        monster_right[3] = monsterSheet.crop(WIDTH*4, HEIGHT*6, WIDTH, HEIGHT);
+
+        //DIABLO
+
+        diablo1_down = new BufferedImage[4];
+        diablo1_down[0] = diablo1Sheet.crop(0, 0, WIDTH * 2, HEIGHT * 2);
+        diablo1_down[1] = diablo1Sheet.crop(WIDTH * 2, 0, WIDTH * 2, HEIGHT * 2);
+        diablo1_down[2] = diablo1Sheet.crop(WIDTH * 4, 0, WIDTH * 2, HEIGHT * 2);
+        diablo1_down[3] = diablo1Sheet.crop(WIDTH * 6, 0, WIDTH * 2, HEIGHT * 2);
+
+        diablo1_up = new BufferedImage[4];
+        diablo1_up[0] = diablo1Sheet.crop(0, HEIGHT * 6, WIDTH * 2, HEIGHT * 2);
+        diablo1_up[1] = diablo1Sheet.crop(WIDTH * 2, HEIGHT * 6, WIDTH * 2, HEIGHT * 2);
+        diablo1_up[2] = diablo1Sheet.crop(WIDTH * 4, HEIGHT * 6, WIDTH * 2, HEIGHT * 2);
+        diablo1_up[3] = diablo1Sheet.crop(WIDTH * 6, HEIGHT * 6, WIDTH * 2, HEIGHT * 2);
+
+        diablo1_left = new BufferedImage[4];
+        diablo1_left[0] = diablo1Sheet.crop(0, HEIGHT * 2, WIDTH * 2, HEIGHT * 2);
+        diablo1_left[1] = diablo1Sheet.crop(WIDTH * 2, HEIGHT * 2, WIDTH * 2, HEIGHT * 2);
+        diablo1_left[2] = diablo1Sheet.crop(WIDTH * 4, HEIGHT * 2, WIDTH * 2, HEIGHT * 2);
+        diablo1_left[3] = diablo1Sheet.crop(WIDTH * 6, HEIGHT * 2, WIDTH * 2, HEIGHT * 2);
+
+        diablo1_right = new BufferedImage[4];
+        diablo1_right[0] = diablo1Sheet.crop(0, HEIGHT * 4, WIDTH * 2, HEIGHT * 2);
+        diablo1_right[1] = diablo1Sheet.crop(WIDTH * 2, HEIGHT * 4, WIDTH * 2, HEIGHT * 2);
+        diablo1_right[2] = diablo1Sheet.crop(WIDTH * 4, HEIGHT * 4, WIDTH * 2, HEIGHT * 2);
+        diablo1_right[3] = diablo1Sheet.crop(WIDTH * 6, HEIGHT * 4, WIDTH * 2, HEIGHT * 2);
+        
+        //DISBLO_ATTACK
+        
+        diablo_attack = new BufferedImage[3];
+        diablo_attack[0] = skillSheet.crop(0, 0, WIDTH, HEIGHT);
+        diablo_attack[1] = skillSheet.crop(WIDTH,0, WIDTH, HEIGHT);
+        diablo_attack[2] = skillSheet.crop(WIDTH*2, 0, WIDTH, HEIGHT);
+
+
+        //HERO
+
+        hero_down = new BufferedImage[8];
+        hero_down[0] = heroSheet.crop(WIDTH*8, HEIGHT, WIDTH, HEIGHT);
+        hero_down[1] = heroSheet.crop(WIDTH*9, HEIGHT, WIDTH, HEIGHT);
+        hero_down[2] = heroSheet.crop(WIDTH*10, HEIGHT, WIDTH, HEIGHT);
+        hero_down[3] = heroSheet.crop(WIDTH*11, HEIGHT, WIDTH, HEIGHT);
+        hero_down[4] = heroSheet.crop(WIDTH*12, HEIGHT, WIDTH, HEIGHT);
+        hero_down[5] = heroSheet.crop(WIDTH*13, HEIGHT, WIDTH, HEIGHT);
+        hero_down[6] = heroSheet.crop(WIDTH*14, HEIGHT, WIDTH, HEIGHT);
+        hero_down[7] = heroSheet.crop(WIDTH*15, HEIGHT, WIDTH, HEIGHT);
+
+
+        hero_up = new BufferedImage[8];
+        hero_up[0] = heroSheet.crop(0, HEIGHT, WIDTH, HEIGHT);
+        hero_up[1] = heroSheet.crop(WIDTH, HEIGHT, WIDTH, HEIGHT);
+        hero_up[2] = heroSheet.crop(WIDTH*2, HEIGHT, WIDTH, HEIGHT);
+        hero_up[3] = heroSheet.crop(WIDTH*3, HEIGHT, WIDTH, HEIGHT);
+        hero_up[4] = heroSheet.crop(WIDTH*4, HEIGHT, WIDTH, HEIGHT);
+        hero_up[5] = heroSheet.crop(WIDTH*5, HEIGHT, WIDTH, HEIGHT);
+        hero_up[6] = heroSheet.crop(WIDTH*6, HEIGHT, WIDTH, HEIGHT);
+        hero_up[7] = heroSheet.crop(WIDTH*7, HEIGHT, WIDTH, HEIGHT);
+
+
+        hero_left = new BufferedImage[8];
+        hero_left[0] = heroSheet.crop(0, 0, WIDTH, HEIGHT);
+        hero_left[1] = heroSheet.crop(WIDTH, 0, WIDTH, HEIGHT);
+        hero_left[2] = heroSheet.crop(WIDTH*2, 0, WIDTH, HEIGHT);
+        hero_left[3] = heroSheet.crop(WIDTH*3, 0, WIDTH, HEIGHT);
+        hero_left[4] = heroSheet.crop(WIDTH*4, 0, WIDTH, HEIGHT);
+        hero_left[5] = heroSheet.crop(WIDTH*5, 0, WIDTH, HEIGHT);
+        hero_left[6] = heroSheet.crop(WIDTH*6, 0, WIDTH, HEIGHT);
+        hero_left[7] = heroSheet.crop(WIDTH*7, 0, WIDTH, HEIGHT);
+
+
+        hero_right = new BufferedImage[8];
+        hero_right[0] = heroSheet.crop(WIDTH*8, 0, WIDTH, HEIGHT);
+        hero_right[1] = heroSheet.crop(WIDTH*9, 0, WIDTH, HEIGHT);
+        hero_right[2] = heroSheet.crop(WIDTH*10, 0, WIDTH, HEIGHT);
+        hero_right[3] = heroSheet.crop(WIDTH*11, 0, WIDTH, HEIGHT);
+        hero_right[4] = heroSheet.crop(WIDTH*12, 0, WIDTH, HEIGHT);
+        hero_right[5] = heroSheet.crop(WIDTH*13, 0, WIDTH, HEIGHT);
+        hero_right[6] = heroSheet.crop(WIDTH*14, 0, WIDTH, HEIGHT);
+        hero_right[7] = heroSheet.crop(WIDTH*15, 0, WIDTH, HEIGHT);
+
+
+        hero_attack_down = new BufferedImage[6];
+        hero_attack_down[0] = heroSheet.crop(0, HEIGHT*4, WIDTH*3, HEIGHT*3);
+        hero_attack_down[1] = heroSheet.crop(WIDTH*3, HEIGHT*4, WIDTH*3, HEIGHT*3);
+        hero_attack_down[2] = heroSheet.crop(WIDTH*6, HEIGHT*4, WIDTH*3, HEIGHT*3);
+        hero_attack_down[3] = heroSheet.crop(WIDTH*9, HEIGHT*4, WIDTH*3, HEIGHT*3);
+        hero_attack_down[4] = heroSheet.crop(WIDTH*12, HEIGHT*4, WIDTH*3, HEIGHT*3);
+        hero_attack_down[5] = heroSheet.crop(WIDTH*15, HEIGHT*4, WIDTH*3, HEIGHT*3);
+
+
+        hero_attack_up = new BufferedImage[6];
+        hero_attack_up[0] = heroSheet.crop(0, HEIGHT*7, WIDTH*3, HEIGHT*3);
+        hero_attack_up[1] = heroSheet.crop(WIDTH*3, HEIGHT*7, WIDTH*3, HEIGHT*3);
+        hero_attack_up[2] = heroSheet.crop(WIDTH*6, HEIGHT*7, WIDTH*3, HEIGHT*3);
+        hero_attack_up[3] = heroSheet.crop(WIDTH*9, HEIGHT*7, WIDTH*3, HEIGHT*3);
+        hero_attack_up[4] = heroSheet.crop(WIDTH*12, HEIGHT*7, WIDTH*3, HEIGHT*3);
+        hero_attack_up[5] = heroSheet.crop(WIDTH*15, HEIGHT*7, WIDTH*3, HEIGHT*3);
+
+
+        hero_attack_left = new BufferedImage[6];
+        hero_attack_left[0] = heroSheet.crop(0, HEIGHT*10, WIDTH*3, HEIGHT*3);
+        hero_attack_left[1] = heroSheet.crop(WIDTH*3, HEIGHT*10, WIDTH*3, HEIGHT*3);
+        hero_attack_left[2] = heroSheet.crop(WIDTH*6, HEIGHT*10, WIDTH*3, HEIGHT*3);
+        hero_attack_left[3] = heroSheet.crop(WIDTH*9, HEIGHT*10, WIDTH*3, HEIGHT*3);
+        hero_attack_left[4] = heroSheet.crop(WIDTH*12, HEIGHT*10, WIDTH*3, HEIGHT*3);
+        hero_attack_left[5] = heroSheet.crop(WIDTH*15, HEIGHT*10, WIDTH*3, HEIGHT*3);
+
+
+        hero_attack_right = new BufferedImage[6];
+        hero_attack_right[0] = heroSheet.crop(0, HEIGHT*13, WIDTH*3, HEIGHT*3);
+        hero_attack_right[1] = heroSheet.crop(WIDTH*3, HEIGHT*13, WIDTH*3, HEIGHT*3);
+        hero_attack_right[2] = heroSheet.crop(WIDTH*6, HEIGHT*13, WIDTH*3, HEIGHT*3);
+        hero_attack_right[3] = heroSheet.crop(WIDTH*9, HEIGHT*13, WIDTH*3, HEIGHT*3);
+        hero_attack_right[4] = heroSheet.crop(WIDTH*12, HEIGHT*13, WIDTH*3, HEIGHT*3);
+        hero_attack_right[5] = heroSheet.crop(WIDTH*15, HEIGHT*13, WIDTH*3, HEIGHT*3);
+
+        //SKILL
+
+        skill = new BufferedImage[3];
+        skill[0] = skillSheet.crop(WIDTH*3, HEIGHT*4, WIDTH, HEIGHT);
+        skill[1] = skillSheet.crop(WIDTH*4, HEIGHT*4, WIDTH, HEIGHT);
+        skill[2] = skillSheet.crop(WIDTH*5, HEIGHT*4, WIDTH, HEIGHT);
+
+        portal = new BufferedImage[4];
+        portal[0] = portalSheet.crop(0, 0, WIDTH*2, HEIGHT*2);
+        portal[1] = portalSheet.crop(WIDTH*2, 0, WIDTH*2, HEIGHT*2);
+        portal[2] = portalSheet.crop(WIDTH*4, 0, WIDTH*2, HEIGHT*2);
+        portal[3] = portalSheet.crop(WIDTH*6, 0, WIDTH*2, HEIGHT*2);
+        
+        //NAME MAP
+        namemap = new BufferedImage[9];
+        namemap[0] = nameSheet.crop(0, WIDTH*2*4, WIDTH*2, HEIGHT*8);
+        namemap[1] = nameSheet.crop(0, WIDTH*2*3, WIDTH*2, HEIGHT*8);
+        namemap[2] = nameSheet.crop(0, WIDTH*2*2, WIDTH*2, HEIGHT*8);
+        namemap[3] = nameSheet.crop(0, WIDTH*2*1, WIDTH*2, HEIGHT*8);
+        namemap[4] = nameSheet.crop(0, WIDTH*2*0, WIDTH*2, HEIGHT*8);
+        namemap[5] = nameSheet.crop(0, WIDTH*2*1, WIDTH*2, HEIGHT*8);
+        namemap[6] = nameSheet.crop(0, WIDTH*2*2, WIDTH*2, HEIGHT*8);
+        namemap[7] = nameSheet.crop(0, WIDTH*2*3, WIDTH*2, HEIGHT*8);
+        namemap[8] = nameSheet.crop(0, WIDTH*2*4, WIDTH*2, HEIGHT*8);
+        
+        
+        
+    }
+}

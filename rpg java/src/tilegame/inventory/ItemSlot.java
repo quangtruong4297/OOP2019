@@ -1,0 +1,68 @@
+package tilegame.inventory;
+
+import tilegame.gfx.Assets;
+import tilegame.gfx.Text;
+import tilegame.items.Item;
+
+import java.awt.*;
+
+
+public class ItemSlot {
+
+    public static final int SLOT_SIZE = 34;
+    private int x, y;
+    private Item item;
+
+    public ItemSlot(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void tick() {
+
+    }
+
+    public void render(Graphics g) {
+        g.drawImage(Assets.slot, x, y, SLOT_SIZE, SLOT_SIZE, null);
+        if(item != null) {
+            g.drawImage(item.getTexture(), x+2, y+2, SLOT_SIZE-4, SLOT_SIZE-4, null);
+            Text.drawString(g, ""+item.getCount(), x+2, y - 2+ SLOT_SIZE, false, Color.BLACK, Assets.font12);
+        }
+    }
+
+    public boolean addItem(Item i) {
+    	if(i.getId() < 2) {
+        if(item != null) {
+            if(i.getId() == item.getId()) {
+                item.setCount(item.getCount() + i.getCount());
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            item = i;
+            return true;
+        }
+        
+    	}
+		return false;
+    }
+
+    public void swapItem(ItemSlot is) {
+        Item temp = item;
+        item = is.getItem();
+        is.setItem(temp);
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    Rectangle getSlotBounds() {
+        return new Rectangle(x, y, SLOT_SIZE, SLOT_SIZE);
+    }
+}

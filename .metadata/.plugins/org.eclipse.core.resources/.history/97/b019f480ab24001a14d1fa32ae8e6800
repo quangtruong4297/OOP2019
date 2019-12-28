@@ -1,0 +1,5 @@
+package tilegame.entities.creatures;
+
+public class Diablo_attack {
+
+}
